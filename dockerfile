@@ -42,5 +42,10 @@ RUN git clone --depth 1 https://github.com/sstephenson/rbenv.git /root/.rbenv &&
 ENV PATH /root/.rbenv/bin:/root/.rbenv/shims:$PATH
 RUN echo "export PATH=$PATH" >> /root/.bashrc
 
+#install sublime text
+RUN add-apt-repository ppa:webupd8team/sublime-text-3
+RUN apt-get update
+RUN apt-get install sublime-text-installer
+
 #expose app port
 EXPOSE 3000
