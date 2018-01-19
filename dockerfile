@@ -3,13 +3,8 @@ FROM ubuntu:latest
 
 # referencia del creador
 LABEL MAINTAINER="Mario Vizcaino"
-LABEL CONCTAC="vzcdeveloper@gmail.com"
 
-#Ejecutar comando en la imagen antes de ser creada
-RUN mkdir -p /app
-WORKDIR /app
-
-#INSTALAR DEPENDENCIAS
+#INSTALL DEPENDENCES 
 RUN apt-get update && \
     apt-get install -y autoconf \
                        bison \
@@ -30,8 +25,22 @@ RUN apt-get update && \
     apt-get autoremove -y && \
     apt-get clean
 
-#INSTALAR RVM - RUBY
-RUN \curl -sSL https://get.rvm.io | bash -s stable --ruby
+#install rbenv - RUBY
+RUN git clone --depth 1 https://github.com/sstephenson/rbenv.git /root/.rbenv && \
+    git clone --depth 1 https://github.com/sstephenson/ruby-build.git /root/.rbenv/plugins/ruby-build && \
+    rm -rfv /root/.rbenv/plugins/ruby-build/.git && \
+    rm -rfv /root/.rbenv/.git && \
+    export PATH="/root/.rbenv/bin:$PATH" && \
+    eval "$(rbenv init -)" && \
+    rbenv install '2.3.1' && \
+    rbenv global '2.3.1' && \
+    gem install bundler --no-ri --no-rdoc && \
+    rbenv rehash && \
+    gem install rails -v '>= 5.0.0' --no-ri --no-rdoc && \
+    rbenv rehash
 
 ENV PATH /root/.rbenv/bin:/root/.rbenv/shims:$PATH
 RUN echo "export PATH=$PATH" >> /root/.bashrc
+
+#expose app port
+EXPOSE 3000
